@@ -15,6 +15,6 @@ public class StringConstants {
 	public static String VLC_PATH = "C:/Program Files (x86)/VideoLAN/VLC/";//Configure this to the path of installation of your VLC Player
 	public static String VLC_PROG = "vlc ";
 	public static String VLC_CLOSE = ", vlc://quit";
-	public static String API_KEY = "&key=AIzaSyDu1FHY-hS4ymYwweHYhbWK4PHJPG3QzBQ";
+	public static String API_KEY = "&key=YOUR_API_KEY";
 
 }
