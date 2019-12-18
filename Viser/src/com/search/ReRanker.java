@@ -39,7 +39,6 @@ public class ReRanker {
 	      Map<Integer,YoutubeVideo> rankList = new TreeMap<Integer, YoutubeVideo>();
 	      for(YoutubeVideo vid : videoList){
 	    	  String videoId = vid.getVideoId();
-	    	 // System.out.println(videoId);
 	    	  int rank1 = durationList.get(videoId);
 	    	  int rank2 = ratingList.get(videoId);
 	    	  int rank3 = viewList.get(videoId);
@@ -52,7 +51,6 @@ public class ReRanker {
 	      {
 	    	  YoutubeVideo video = rankList.get(listRank);
 	    	  if(video!=null){
-	    	  //System.out.println("Video Rank : "+listRank+", Video Name : "+video.getVideoName()+", Video Length : "+video.getDuration()+", Video Views : "+video.getViews()+", Video Rating : "+video.getRating());
 	    	  playlist = playlist+video.getVideoUrl()+", ";
 	    	  }
 	      }

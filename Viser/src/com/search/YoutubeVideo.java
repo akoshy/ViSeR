@@ -8,13 +8,13 @@ import java.util.Comparator;
  * @FileName YouTubeVideo.java*/
 public final class YoutubeVideo {
 	String videoId;
-	String duration;
+	Integer duration;
 	String views;
-	String rating;
+	Integer rating;
 	String videoName;
 	String videoUrl;
 	
-	public YoutubeVideo(String videoId, String duration, String views,String rating, String videoName, String videoUrl) {
+	public YoutubeVideo(String videoId, Integer duration, String views,Integer rating, String videoName, String videoUrl) {
 		super();
 		this.videoId = videoId;
 		this.duration = duration;
@@ -30,10 +30,10 @@ public final class YoutubeVideo {
 	public void setVideoId(String videoId) {
 		this.videoId = videoId;
 	}
-	public String getDuration() {
+	public Integer getDuration() {
 		return duration;
 	}
-	public void setDuration(String duration) {
+	public void setDuration(Integer duration) {
 		this.duration = duration;
 	}
 	public String getViews() {
@@ -42,10 +42,10 @@ public final class YoutubeVideo {
 	public void setViews(String views) {
 		this.views = views;
 	}
-	public String getRating() {
+	public Integer getRating() {
 		return rating;
 	}
-	public void setRating(String rating) {
+	public void setRating(Integer rating) {
 		this.rating = rating;
 	}
 	public String getVideoName() {
@@ -66,17 +66,17 @@ public final class YoutubeVideo {
 	public static enum OrderVideo implements Comparator<YoutubeVideo> {
 		ByDuration() {
 			public int compare(YoutubeVideo lhs, YoutubeVideo rhs) {
-				Integer dur1 = Integer.parseInt(lhs.duration);
-				Integer dur2 = Integer.parseInt(rhs.duration);
-	        	return dur1.compareTo(dur2);
+	        	return lhs.duration.compareTo(rhs.duration);
 	        	}
 			},
 		ByRating() {
 	        public int compare(YoutubeVideo lhs, YoutubeVideo rhs) {
 	           // TODO: Should really use a collator.
-	        	Double rat1 = Double.parseDouble(lhs.rating);
-	        	Double rat2 = Double.parseDouble(rhs.rating);
-	        	return rat1.compareTo(rat2);
+				/*
+				 * Double rat1 = Double.parseDouble(lhs.rating); Double rat2 =
+				 * Double.parseDouble(rhs.rating);
+				 */
+	        	return lhs.rating.compareTo(rhs.rating);
 	        	}
 	        }, 
 	    ByViews() {
