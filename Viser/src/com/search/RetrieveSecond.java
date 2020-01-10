@@ -58,7 +58,7 @@ public class RetrieveSecond {
 					video = new YoutubeVideo(videoId, duration, views, rating, videoName, videoUrl);
 				}
 			} catch (IOException ioe) {
-				System.out.println(ioe.getMessage() + " while reading JSON for video : " + videoId);
+				LOG.log(Level.SEVERE, ioe.getMessage() + " while reading JSON for video : " + videoId);
 				videoUrl += videoId;
 				video = new YoutubeVideo(videoId, duration, views, rating, videoName, videoUrl);
 
