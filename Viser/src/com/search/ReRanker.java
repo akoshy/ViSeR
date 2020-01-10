@@ -14,9 +14,8 @@ public class ReRanker {
 		   * @author ajo.koshy
 		   *
 		   * */
-		  final Map<String,Integer> durationList = new HashMap<String,Integer>();
-		  videoList.sort(Comparator.comparing(YoutubeVideo::getDuration));
-		  durationList.putAll(YoutubeVideo.rankedMapForSortedList(videoList.stream().sorted(Comparator.comparing(YoutubeVideo::getDuration)).collect(Collectors.toList())));
+		final Map<String,Integer> durationList = new HashMap<String,Integer>();
+		durationList.putAll(YoutubeVideo.rankedMapForSortedList(videoList.stream().sorted(Comparator.comparing(YoutubeVideo::getDuration)).collect(Collectors.toList())));
 		  
 	      final Map<String,Integer> ratingList = new HashMap<String,Integer>();
 	      ratingList.putAll(YoutubeVideo.rankedMapForSortedList(videoList.stream().sorted(Comparator.comparing(YoutubeVideo::getRating).reversed()).collect(Collectors.toList())));
