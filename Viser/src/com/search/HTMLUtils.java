@@ -1,26 +1,24 @@
 package com.search;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.*;
-import org.jsoup.select.Elements;
 
 public class HTMLUtils {
 	private HTMLUtils() {
 	}
 
-	public static List<String> extractLinks(String url) throws IOException {
-		final ArrayList<String> result = new ArrayList<String>();
-
-		Document doc = Jsoup.connect(url).get();
-		Elements links = doc.select("a[href]");
-
-		for (Element link : links) {
-			if (link.attr("href").indexOf("watch") > -1)
-				result.add(link.attr("href"));
-		}
-		return result;
+	public static List<YoutubeVideo> extractLinks(String url) throws IOException {
+		List<YoutubeVideo> videoList = new ArrayList<YoutubeVideo>();
+		videoList = Jsoup.connect(url).get().select("a[href]").stream()
+				.filter(videoElement -> videoElement.attr("href").indexOf("watch") > -1)
+				.map(videoElement -> new RetrieveSecond(videoElement.attr("href").substring(9, 20)).returnSearchVideo())
+				.filter(youtubeVideo -> youtubeVideo!=null)
+				.collect(Collectors.toList());
+		return videoList;
 	}
 
 	public final static void evaluator(String url_key) throws Exception {
@@ -30,16 +28,7 @@ public class HTMLUtils {
 			url_key = url_key.replace(' ', '+');
 		}
 		String url_video = StringConstants.SEARCH_URL + url_key;
-		List<String> links = HTMLUtils.extractLinks(url_video);
-		for (String link : links) {
-			YoutubeVideo myVideo;
-			try {
-				myVideo = new RetrieveSecond(link.substring(9, 20)).returnSearchVideo();
-				if (myVideo != null)
-					videoList.add(myVideo);
-			} catch (Exception e) {
-			}
-		}
+		videoList = HTMLUtils.extractLinks(url_video);
 		ReRanker.reRankedPlaylistExecutor(videoList);
 
 	}

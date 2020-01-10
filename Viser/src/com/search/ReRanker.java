@@ -1,10 +1,11 @@
 package com.search;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class ReRanker {
 	public static void reRankedPlaylistExecutor(List<YoutubeVideo> videoList){
@@ -13,50 +14,22 @@ public class ReRanker {
 		   * @author ajo.koshy
 		   *
 		   * */
-		  int listLimit=0;
-		  Map<String,Integer> durationList = new HashMap<String,Integer>();
-	      Collections.sort(videoList, YoutubeVideo.OrderVideo.ByDuration.inAscendingOrder());
-	      for(YoutubeVideo vid : videoList){
-	    	  int durationCountRank=1;
-	    	  durationList.put(vid.getVideoId(),durationCountRank);
-	    	  durationCountRank++;
-	      }
-	      Map<String,Integer> ratingList = new HashMap<String,Integer>();
-	      Collections.sort(videoList, YoutubeVideo.OrderVideo.ByRating.inDescendingOrder());
-	      for(YoutubeVideo vid : videoList){
-	    	  int ratingCountRank=1;
-	    	  ratingList.put(vid.getVideoId(),ratingCountRank);
-	    	  ratingCountRank++;
-	      }
-	      Map<String,Integer> viewList = new HashMap<String,Integer>();
-	      Collections.sort(videoList, YoutubeVideo.OrderVideo.ByViews.inDescendingOrder());
-	      int viewsCountRank=1;
-	      for(YoutubeVideo vid : videoList){
-	    	  
-	    	  viewList.put(vid.getVideoId(),viewsCountRank);
-	    	  viewsCountRank++;
-	      }
-	      Map<Integer,YoutubeVideo> rankList = new TreeMap<Integer, YoutubeVideo>();
-	      for(YoutubeVideo vid : videoList){
-	    	  String videoId = vid.getVideoId();
-	    	  int rank1 = durationList.get(videoId);
-	    	  int rank2 = ratingList.get(videoId);
-	    	  int rank3 = viewList.get(videoId);
-	    	  int rank = (int)Math.ceil((rank1 + rank2 + rank3) / 3);
-	    	  rankList.put(rank, vid);
-	    	  listLimit=rank;
-	      }
-	      String playlist="";
-	      for(int listRank = 1; listRank<=listLimit;listRank++)
-	      {
-	    	  YoutubeVideo video = rankList.get(listRank);
-	    	  if(video!=null){
-	    	  playlist = playlist+video.getVideoUrl()+", ";
-	    	  }
-	      }
-	      playlist = playlist.substring(0, playlist.length()-2);
+		  final Map<String,Integer> durationList = new HashMap<String,Integer>();
+		  videoList.sort(Comparator.comparing(YoutubeVideo::getDuration));
+		  durationList.putAll(YoutubeVideo.rankedMapForSortedList(videoList.stream().sorted(Comparator.comparing(YoutubeVideo::getDuration)).collect(Collectors.toList())));
+		  
+	      final Map<String,Integer> ratingList = new HashMap<String,Integer>();
+	      ratingList.putAll(YoutubeVideo.rankedMapForSortedList(videoList.stream().sorted(Comparator.comparing(YoutubeVideo::getRating).reversed()).collect(Collectors.toList())));
 	      
-	      //RunTimeExecutor.videoPlayer(StringConstants.VLC_PATH+StringConstants.VLC_PROG+rankList.get(1).getVideoUrl()+StringConstants.VLC_CLOSE);
-	      RunTimeExecutor.videoPlayer(StringConstants.VLC_PATH+StringConstants.VLC_PROG+playlist+StringConstants.VLC_CLOSE);
+	      final Map<String,Integer> viewList = new HashMap<String,Integer>();
+	      viewList.putAll(YoutubeVideo.rankedMapForSortedList(videoList.stream().sorted(Comparator.comparing(YoutubeVideo::getViews).reversed()).collect(Collectors.toList())));
+	      
+	      Map<Integer,YoutubeVideo> rankList = new TreeMap<Integer, YoutubeVideo>();
+	      videoList.forEach(currentVideo -> 
+	      	{rankList.put((int) Math.ceil((durationList.get(currentVideo.getVideoId()) + ratingList.get(currentVideo.getVideoId()) + viewList.get(currentVideo.getVideoId())) / 3), currentVideo);});
+	      
+	      StringBuffer playlist = new StringBuffer(" ");
+	      rankList.forEach((listRank, video) -> {playlist.append(rankList.get(listRank).getVideoUrl()+", ");});
+	      RunTimeExecutor.videoPlayer(StringConstants.VLC_PATH  + StringConstants.VLC_PROG + playlist.substring(0, playlist.length()-2) + StringConstants.VLC_CLOSE);
 	  }
 }
