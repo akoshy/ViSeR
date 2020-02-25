@@ -7,7 +7,7 @@ package com.visual;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.search.HTMLUtils;
+import com.search.parse.HTMLUtils;
 
 /**
  *
