@@ -12,26 +12,30 @@ import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
+import com.search.object.PropertyUtil;
 import com.search.object.StringConstants;
 import com.search.object.YoutubeVideo;
 
 public class RetrieveSecond {
-	String  videoName = "Private Video", videoUrl = StringConstants.VIDEO_URL;
-	int duration = 0, rating = 0, views = 0;
-	String xml;
-	Boolean flag = false;
-	YoutubeVideo video;
-	String isoDuration;
-	Map<String,Integer> typeDuration = new TreeMap<String,Integer>(){{
+	private static String  videoName = "Private Video";
+	private static String videoUrl = StringConstants.VIDEO_URL;
+	private static int duration = 0;
+	private static int rating = 0;
+	private static int views = 0;
+	private static YoutubeVideo video;
+	private static String isoDuration;
+	private static Map<String,Integer> typeDuration = new TreeMap<String,Integer>(){{
 		put("H", 3600);
 		put("M", 60);
 		put("S", 1);
 		
 	}};
 	private final static Logger LOG =  Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	public RetrieveSecond(String videoId) {
+	private RetrieveSecond() {
+	}
+	public static YoutubeVideo from (String videoId) {
 		try {
-			URL url = new URL(StringConstants.GDATA_URL + videoId + StringConstants.API_KEY + StringConstants.ATTRIBUTES_PARAM);
+			URL url = new URL(StringConstants.GDATA_URL + videoId + PropertyUtil.getPropertyMap().getProperty(StringConstants.API_KEY) + StringConstants.ATTRIBUTES_PARAM);
 			HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 			urlConn.setRequestMethod("GET");
 			urlConn.setRequestProperty("Accept", "application/json");
@@ -51,11 +55,12 @@ public class RetrieveSecond {
 						if (isoDuration.indexOf(type) > -1)
 							duration = duration + timeMultiplier * Integer.parseInt(isoDuration.substring(0, isoDuration.indexOf(type)));
 							isoDuration = isoDuration.substring(isoDuration.indexOf(type) + 1, isoDuration.length());
-					});
-					
-					views = Integer.parseInt(videoStats.getString("viewCount"));
-					rating = (Integer.parseInt(videoStats.getString("likeCount"))
-							- Integer.parseInt(videoStats.getString("dislikeCount")));
+						});
+					if(Boolean.getBoolean(PropertyUtil.getPropertyMap().getProperty(StringConstants.RERANK_FLAG))) {
+						views = Integer.parseInt(videoStats.getString("viewCount"));
+						rating = (Integer.parseInt(videoStats.getString("likeCount"))
+								- Integer.parseInt(videoStats.getString("dislikeCount")));
+					}
 					videoUrl += videoId;
 					videoName = videoSnippet.getString("title");
 					video = new YoutubeVideo(videoId, duration, views, rating, videoName, videoUrl);
@@ -69,6 +74,7 @@ public class RetrieveSecond {
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, e.getMessage() + " for video : " + videoId);
 		}
+		return video;
 	}
 	
 	public YoutubeVideo returnSearchVideo() {
