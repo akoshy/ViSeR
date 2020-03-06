@@ -79,8 +79,7 @@ public final class YoutubeVideo {
 	public static Map<String,Integer> rankedMapForSortedList(List<YoutubeVideo> videoList){
 		Map<String,Integer> rankedMap = new HashMap<String,Integer>();
 		AtomicInteger currentRank = new AtomicInteger(1);
-		videoList.forEach(video -> {rankedMap.put(video.getVideoId(),currentRank.getAndIncrement());
-		});
+		videoList.forEach(video -> rankedMap.put(video.getVideoId(),currentRank.getAndIncrement()));
 		return rankedMap;
 	}
 }
